@@ -27,9 +27,10 @@ function Content() {
         <Space>
           <Form.Item label="Search">
             <Search
-              value={provider.filter.search}
+              value={provider.tmpSearch}
               placeholder="input search text"
               onSearch={(value) => provider.filterChange('search', value)}
+              onChange={(e) => provider.searchChange(e.target.value)}
               enterButton
             />
           </Form.Item>
@@ -48,6 +49,7 @@ function Content() {
         </Space>
       </Form>
       <Table
+        onChange={provider.tableChange}
         rowKey={(record) => record.login.uuid}
         pagination={provider.pagination}
         columns={provider.columns}

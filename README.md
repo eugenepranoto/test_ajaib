@@ -1,34 +1,33 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+Im using nextjs as the framework of this project with typescript extension.
+I also installed antd since I have an experience with it, and I think the example of the test also using antd.
+I also installed eslint with prettier to help my code stay clean and beauty.
 
-## Getting Started
+The project structure consist:
+src
+    common -> container common component or styles
+        components
+            layout
+                base -> the container/parent of the content, usually consist of header and footer
+        styles
+    helpers -> usually contain common function that doesnt affect any state (in this project I dont use any helper)
+    models -> contain all the main interface used for this application since we are using .ts
+    modules -> or usually called as features is a component that called by the pages. Each modules contain 1 view and 1 provider.
+                this help me to make the code structure more modular and not mixed between the function and the view.
+                Im using react context and react hook for the provider.
+    pages -> provide by next js for return the UI. The structure inside pages is determine the path/routing on the URL.
 
-First, run the development server:
+Explanation about the home_provider (src/modules/home/home_provider)
+there is 3 main state change for the data fetching which is 
+- filter
+- pagination
+- columns
 
-```bash
-npm run dev
-# or
-yarn dev
-```
+also when the page first time initiate, the data fetching will be triggered.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Im using useEffect to make this possible.
 
-You can start editing the page by modifying `pages/index.tsx`. The page auto-updates as you edit the file.
+for managing filter state Im using filterchange function to update the state.
 
-[API routes](https://nextjs.org/docs/api-routes/introduction) can be accessed on [http://localhost:3000/api/hello](http://localhost:3000/api/hello). This endpoint can be edited in `pages/api/hello.ts`.
+for managing the pagination and column sorting Im using the function that already provided by antd table.
+I just follow the parameter and take the value to update pagination and columns state.
 
-The `pages/api` directory is mapped to `/api/*`. Files in this directory are treated as [API routes](https://nextjs.org/docs/api-routes/introduction) instead of React pages.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.

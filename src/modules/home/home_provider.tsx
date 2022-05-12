@@ -2,21 +2,27 @@ import React, { ReactNode, useState, useEffect } from 'react';
 import { ColumnsType } from 'antd/es/table';
 import User from '@models/user/user';
 import Response from '@models/response/response';
+import { TablePaginationConfig } from 'antd/es/table';
+import { SorterResult, FilterValue } from 'antd/lib/table/interface';
 
 export default function HomeProvider({ children }: { children: ReactNode }) {
   const [data, setData] = useState([] as User[]);
   const [initialize, setInitialize] = useState(true);
   const [loading, setLoading] = useState(false);
+  const [tmpSearch, setTmpSearch] = useState('');
   const [filter, setFilter] = useState({
     gender: '',
     search: ''
   });
   const [apiUrl] = useState('https://randomuser.me/api');
-  const [pagination, setPagination] = useState({
+  const [pagination, setPagination] = useState<TablePaginationConfig>({
     pageSize: 10,
     total: 20,
-    current: 1,
-    onChange: (current: number) => setPagination({ ...pagination, current: current })
+    current: 1
+  });
+  const [sorter, setSorter] = useState({
+    column: '',
+    order: ''
   });
 
   const columns: ColumnsType<User> = [
@@ -30,17 +36,20 @@ export default function HomeProvider({ children }: { children: ReactNode }) {
       key: 'name',
       title: 'Name',
       dataIndex: 'name',
-      render: (val) => <span>{val.first + ' ' + val.last}</span>
+      render: (val) => <span>{val.first + ' ' + val.last}</span>,
+      sorter: true
     },
     {
       key: 'email',
       title: 'Email',
-      dataIndex: 'email'
+      dataIndex: 'email',
+      sorter: true
     },
     {
       key: 'gender',
       title: 'Gender',
-      dataIndex: 'gender'
+      dataIndex: 'gender',
+      sorter: true
     },
     {
       key: 'registered',
@@ -48,15 +57,18 @@ export default function HomeProvider({ children }: { children: ReactNode }) {
       dataIndex: 'registered',
       render: (val) => (
         <span>{new Date(val.date).toISOString().substring(0, 16).replace('T', ' ')}</span>
-      )
+      ),
+      sorter: true
     }
   ];
 
   async function getData() {
     const params = {
-      results: pagination.pageSize.toString(),
-      page: pagination.current.toString(),
-      pageSize: pagination.total.toString(),
+      results: pagination?.pageSize?.toString() || '20',
+      page: pagination?.current?.toString() || '1',
+      pageSize: pagination?.total?.toString() || '20',
+      ...(sorter.column && { sortBy: sorter.column }),
+      ...(sorter.order && { sortOrder: sorter.order }),
       ...(filter.gender && { gender: filter.gender }),
       ...(filter.search && { keyword: filter.search })
     };
@@ -90,36 +102,58 @@ export default function HomeProvider({ children }: { children: ReactNode }) {
   }, [filter, pagination]);
 
   function filterChange(key: string, value: string) {
-    console.log(value);
     setFilter({ ...filter, [key]: value });
-    console.log(filter);
   }
 
   function resetFilter() {
     setFilter({ gender: '', search: '' });
+    setTmpSearch('');
+  }
+
+  function searchChange(value: string) {
+    setTmpSearch(value);
+  }
+
+  function tableChange(
+    pagination: TablePaginationConfig,
+    filters: Record<string, FilterValue | null>,
+    sorter: any
+  ) {
+    setPagination({ ...pagination });
+    setSorter({ column: sorter?.column?.dataIndex, order: sorter?.order });
   }
 
   const value = {
+    tableChange,
     filterChange,
+    searchChange,
     resetFilter,
     columns,
     data,
     loading,
     pagination,
-    filter
+    filter,
+    tmpSearch
   };
 
   return <HomeContext.Provider value={value}>{children}</HomeContext.Provider>;
 }
 
 type HomeContextType = {
+  tableChange: (
+    pagination: TablePaginationConfig,
+    filters: Record<string, FilterValue | null>,
+    sorter: SorterResult<User> | SorterResult<User>[]
+  ) => void;
   filterChange: (key: string, value: string) => void;
+  searchChange: (value: string) => void;
   resetFilter: () => void;
   columns: ColumnsType<User>;
   data: User[];
   loading: boolean;
-  pagination: { pageSize: number; total: number };
+  pagination: TablePaginationConfig;
   filter: { gender: string; search: string };
+  tmpSearch: string;
 };
 
 export const HomeContext: React.Context<HomeContextType> = React.createContext(

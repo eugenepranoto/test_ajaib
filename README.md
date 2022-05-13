@@ -3,6 +3,13 @@ Im using nextjs as the framework of this project with typescript extension.
 I also installed antd since I have an experience with it, and I think the example of the test also using antd.
 I also installed eslint with prettier to help my code stay clean and beauty.
 
+##instalation
+- npm install
+- npx cypress verify
+- npm run build
+- npm run install
+- npm run cypress -> for unit testing -> select app.spec.js
+
 ## features
 The project structure consist:
 src

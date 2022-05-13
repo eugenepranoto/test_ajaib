@@ -36,6 +36,7 @@ function Content() {
           </Form.Item>
           <Form.Item label="Gender">
             <Select
+              id="select_gender"
               placeholder="Select a gender"
               value={provider.filter.gender}
               onChange={(value) => provider.filterChange('gender', value)}

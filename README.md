@@ -1,7 +1,9 @@
+## description
 Im using nextjs as the framework of this project with typescript extension.
 I also installed antd since I have an experience with it, and I think the example of the test also using antd.
 I also installed eslint with prettier to help my code stay clean and beauty.
 
+## features
 The project structure consist:
 src
     common -> container common component or styles
@@ -9,13 +11,15 @@ src
             layout
                 base -> the container/parent of the content, usually consist of header and footer
         styles
-    helpers -> usually contain common function that doesnt affect any state (in this project I dont use any helper)
+    helpers 
+        fetch_wrapper
     models -> contain all the main interface used for this application since we are using .ts
     modules -> or usually called as features is a component that called by the pages. Each modules contain 1 view and 1 provider.
                 this help me to make the code structure more modular and not mixed between the function and the view.
                 Im using react context and react hook for the provider.
     pages -> provide by next js for return the UI. The structure inside pages is determine the path/routing on the URL.
 
+## logic
 Explanation about the home_provider (src/modules/home/home_provider)
 there is 3 main state change for the data fetching which is 
 - filter

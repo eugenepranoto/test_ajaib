@@ -4,6 +4,7 @@ import User from '@models/user/user';
 import Response from '@models/response/response';
 import { TablePaginationConfig } from 'antd/es/table';
 import { SorterResult, FilterValue } from 'antd/lib/table/interface';
+import { get } from '@helpers/fetch_wrapper';
 
 export default function HomeProvider({ children }: { children: ReactNode }) {
   const [data, setData] = useState([] as User[]);
@@ -14,7 +15,6 @@ export default function HomeProvider({ children }: { children: ReactNode }) {
     gender: '',
     search: ''
   });
-  const [apiUrl] = useState('https://randomuser.me/api');
   const [pagination, setPagination] = useState<TablePaginationConfig>({
     pageSize: 10,
     total: 20,
@@ -72,10 +72,11 @@ export default function HomeProvider({ children }: { children: ReactNode }) {
       ...(filter.gender && { gender: filter.gender }),
       ...(filter.search && { keyword: filter.search })
     };
-    await fetch(apiUrl + '?' + new URLSearchParams(params), { method: 'get' })
-      .then((response) => response.json())
-      .then((data: { results: User[] } & Response) => setData(data.results))
-      .catch((error) => error);
+
+    const response = await get<{ results: User[] } & Response>('?' + new URLSearchParams(params));
+    if (response && response.results) {
+      setData(response.results);
+    }
   }
 
   useEffect(() => {
@@ -86,7 +87,7 @@ export default function HomeProvider({ children }: { children: ReactNode }) {
       setInitialize(false);
     };
 
-    fetchData().catch(console.error);
+    fetchData();
   }, []);
 
   useEffect(() => {
@@ -97,7 +98,7 @@ export default function HomeProvider({ children }: { children: ReactNode }) {
         setLoading(false);
       };
 
-      fetchData().catch(console.error);
+      fetchData();
     }
   }, [filter, pagination]);
 
